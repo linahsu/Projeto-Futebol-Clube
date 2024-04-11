@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('Seu teste', () => {
+describe('INTEGRATION TESTS - TEAMS', () => {
   beforeEach(function () { sinon.restore(); });
 
   let chaiHttpResponse: Response;
