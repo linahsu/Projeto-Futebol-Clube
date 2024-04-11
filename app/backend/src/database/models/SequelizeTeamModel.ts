@@ -6,11 +6,10 @@ import {
   CreationOptional,
 } from 'sequelize';
 import db from '.';
-import { IRead } from '../../Interfaces/IModel';
 // import OtherModel from './OtherModel';
 
 class SequelizeTeamModel extends Model<InferAttributes<SequelizeTeamModel>,
-InferCreationAttributes<SequelizeTeamModel>> implements IRead {
+InferCreationAttributes<SequelizeTeamModel>> {
   declare id: CreationOptional<number>;
   declare teamName: string;
 }
