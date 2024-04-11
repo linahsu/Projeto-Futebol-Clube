@@ -5,13 +5,15 @@ import { IReadByEmail } from '../Interfaces/IModel';
 import { ServiceResponse } from '../types/ServiceResponse';
 import { Token, Login, Payload } from '../types/login';
 import tokenUtils from '../utils/tokenUtils';
+import validateLoginInputs from './validations/validateLoginInputs';
 
 export default class LoginService {
   constructor(private _userModel: IReadByEmail<IUser> = new UserModel()) {}
 
   async login(loginData: Login): Promise<ServiceResponse<Token>> {
+    const error = validateLoginInputs(loginData);
     const user = await this._userModel.getByEmail(loginData.email);
-    if (!user || !bcrypt.compareSync(loginData.password, user.password)) {
+    if (error || !user) {
       return { status: 'unauthorized', data: { message: 'Invalid email or password' } };
     }
     const payload: Payload = {
