@@ -20,22 +20,10 @@ describe('Seu teste', () => {
 
   let chaiHttpResponse: Response;
 
-  // before(async () => {
-  //   sinon
-  //     .stub(SequelizeTeamModel, "findAll")
-  //     .resolves(teamMock.teams as unknown as Model<ITeam>[]);
-  // });
-
-  // after(() => {
-  //   (SequelizeTeamModel.findAll as sinon.SinonStub).restore();
-  // })
-
   it('Lista todos os times com sucesso', async function () {
     // Arrange
-    // const findAllReturn = teamMock.teams.map((team) => SequelizeTeamModel.build(team));
-    // sinon.stub(SequelizeTeamModel, 'findAll').resolves(findAllReturn);
     sinon
-      .stub(SequelizeTeamModel, "findAll")
+      .stub(SequelizeTeamModel, 'findAll')
       .resolves(teamMock.teams as unknown as Model<ITeam>[]);
 
     // Act
