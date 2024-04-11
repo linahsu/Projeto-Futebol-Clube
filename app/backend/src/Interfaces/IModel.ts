@@ -1,4 +1,4 @@
 export interface IRead<T> {
-  findAll(): T[];
-  findById(id: number): T;
+  getAll(): Promise<T[]>;
+  getById(id: number): Promise<T | null>;
 }
