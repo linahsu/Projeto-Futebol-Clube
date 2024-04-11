@@ -32,11 +32,38 @@ describe('Seu teste', () => {
     // Assert
     expect(chaiHttpResponse.status).to.be.eq(200);
     expect(chaiHttpResponse.body).to.deep.equal(teamMock.teams);
-
-    (SequelizeTeamModel.findAll as sinon.SinonStub).restore();
   });
 
-  /**
+  it('Lista um time com id existente com sucesso', async function () {
+    // Arrange
+    sinon
+      .stub(SequelizeTeamModel, 'findOne')
+      .resolves(teamMock.team as unknown as Model<ITeam>);
+
+    // Act
+    chaiHttpResponse = await chai.request(app).get('/teams/1');
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body).to.deep.equal(teamMock.team);
+  });
+
+  it('Erro ao listar um time com id inexistente', async function () {
+    // Arrange
+    sinon
+      .stub(SequelizeTeamModel, 'findOne')
+      .resolves(null);
+
+    // Act
+    chaiHttpResponse = await chai.request(app).get('/teams/123');
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(404);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Team not found' });
+  });
+});
+
+ /**
    * Exemplo do uso de stubs com tipos
    */
 
@@ -61,4 +88,3 @@ describe('Seu teste', () => {
 
   //   expect(...)
   // });
-});

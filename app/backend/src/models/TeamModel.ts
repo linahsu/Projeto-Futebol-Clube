@@ -7,7 +7,6 @@ export default class TeamModel implements IRead<ITeam> {
 
   async getAll(): Promise<ITeam[]> {
     const teams = await this._model.findAll();
-    // return teams.map(({ id, teamName }) => ({ id, teamName }));
     return teams;
   }
 

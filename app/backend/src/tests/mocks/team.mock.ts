@@ -19,5 +19,6 @@ const teams = [
 ];
 
 export default {
+  team,
   teams,
 };
