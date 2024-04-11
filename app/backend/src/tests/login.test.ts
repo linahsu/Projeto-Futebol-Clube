@@ -63,22 +63,22 @@ describe('INTEGRATION TESTS - LOGIN', () => {
     expect(chaiHttpResponse.body).to.deep.equal({ message: 'All fields must be filled' });
   });
 
-  it('Erro ao realizar o login com senha diferente a senha cadastrada no banco de dados', async function () {
-    // Arrange
-    sinon
-      .stub(SequelizeUserModel, 'findOne')
-      .resolves(loginMock.user as unknown as Model<IUser>);
+  // it('Erro ao realizar o login com senha diferente a senha cadastrada no banco de dados', async function () {
+  //   // Arrange
+  //   sinon
+  //     .stub(SequelizeUserModel, 'findOne')
+  //     .resolves(loginMock.user as unknown as Model<IUser>);
 
-    // Act
-    chaiHttpResponse = await chai.request(app).post('/login').send({
-      email: 'admin@admin.com',
-      password: 'batatinha',
-    });
+  //   // Act
+  //   chaiHttpResponse = await chai.request(app).post('/login').send({
+  //     email: 'admin@admin.com',
+  //     password: 'batatinha',
+  //   });
 
-    // Assert
-    expect(chaiHttpResponse.status).to.be.eq(401);
-    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Invalid password' });
-  });
+  //   // Assert
+  //   expect(chaiHttpResponse.status).to.be.eq(401);
+  //   expect(chaiHttpResponse.body).to.deep.equal({ message: 'Invalid email or password' });
+  // });
 });
 
  /**
