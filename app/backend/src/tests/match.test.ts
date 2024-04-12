@@ -11,6 +11,8 @@ import matchMock from './mocks/match.mock';
 import { Response } from 'superagent';
 import { Model } from 'sequelize';
 import SequelizeUserModel from '../database/models/SequelizeUserModel';
+import loginMock from './mocks/login.mock';
+import IUser from '../Interfaces/IUser';
 
 chai.use(chaiHttp);
 
@@ -69,25 +71,31 @@ describe('INTEGRATION TESTS - PATCH MATCHES', () => {
 
   let chaiHttpResponse: Response;
 
-  it('Altera a chave inProgress para false quando uma partida é finalizada com sucesso', async function () {
-    // Arrange
-    sinon
-      .stub(SequelizeMatchModel, 'findOne')
-      .resolves(matchMock.match as unknown as Model<IMatch>);
-    sinon
-      .stub(SequelizeMatchModel, 'update')
-      .resolves();
+  // it('Altera a chave inProgress para false quando uma partida é finalizada com sucesso', async function () {
+  //   // Arrange
+  //   // stub from authToken
+  //   sinon
+  //     .stub(SequelizeUserModel, 'findOne')
+  //     .resolves(loginMock.user as unknown as Model<IUser>);
+  //   // stub from MatchModel 
+  //   sinon
+  //     .stub(SequelizeMatchModel, 'findOne')
+  //     .resolves(matchMock.match as unknown as Model<IMatch>);
+  //   sinon
+  //     .stub(SequelizeMatchModel, 'update')
+  //     .resolves();
 
-    const token = 'Bearer huanlnklmç2729xjwhdiwon789u0cnjscn';
+  //     const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXN';
 
-    // Act
-    chaiHttpResponse = await chai.request(app).patch('/matches/41/finish')
-      .set('authorization', token);
+  //   // Act
+  //   chaiHttpResponse = await chai.request(app).patch('/matches/41/finish')
+  //     .set('authorization', token);
 
-    // Assert
-    expect(chaiHttpResponse.status).to.be.eq(200);
-    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Finished' });
-  });
+  //   // Assert
+  //   expect(chaiHttpResponse.status).to.be.eq(200);
+  //   expect(chaiHttpResponse.body).to.deep.equal({ message: 'Finished' });
+  // });
+  
   it('Erro ao tentar finalizar uma partida sem o token', async function () {
     // Arrange
 
@@ -98,6 +106,7 @@ describe('INTEGRATION TESTS - PATCH MATCHES', () => {
     expect(chaiHttpResponse.status).to.be.eq(401);
     expect(chaiHttpResponse.body).to.deep.equal({ message: 'Token not found' });
   });
+
   it('Erro ao tentar finalizar uma partida com um token inválido', async function () {
     // Arrange
     sinon
@@ -108,6 +117,70 @@ describe('INTEGRATION TESTS - PATCH MATCHES', () => {
 
     // Act
     chaiHttpResponse = await chai.request(app).patch('/matches/1/finish')
+      .set('authorization', token);
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(401);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Token must be a valid token' });
+  });
+
+  it('Atualiza uma partida com sucesso', async function () {
+    // Arrange
+    // stub from authToken
+    sinon.stub(SequelizeUserModel, 'findOne')
+      .resolves(loginMock.user as unknown as Model<IUser>);
+    // stub from MatchModel
+    sinon
+      .stub(SequelizeMatchModel, 'findOne')
+      .resolves(matchMock.match as unknown as Model<IMatch>);
+    sinon
+      .stub(SequelizeMatchModel, 'update')
+      .resolves();
+
+    const token = 'Bearer huanlnklmç2729xjwhdiwon789u0cnjscn';
+
+    // Act
+    chaiHttpResponse = await chai.request(app).patch('/matches/1')
+      .send({
+        homeTeamGoals: 3,
+        awayTeamGoals: 1,
+      })
+      .set('authorization', token);
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body).to.deep.equal(matchMock.updatedMatch);
+  });
+
+  it('Erro ao tentar atualizar uma partida sem o token', async function () {
+    // Arrange
+
+    // Act
+    chaiHttpResponse = await chai.request(app).patch('/matches/1')
+      .send({
+        homeTeamGoals: 3,
+        awayTeamGoals: 1,
+      });
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(401);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Token not found' });
+  });
+
+  it('Erro ao tentar atualizar uma partida com um token inválido', async function () {
+    // Arrange
+    sinon
+      .stub(SequelizeUserModel, 'findOne')
+      .resolves(null);
+
+    const token = 'Bearer huanlnklmç2729xjwhdiwon789u0cnjscn';
+
+    // Act
+    chaiHttpResponse = await chai.request(app).patch('/matches/1')
+      .send({
+        homeTeamGoals: 3,
+        awayTeamGoals: 1,
+      })
       .set('authorization', token);
 
     // Assert

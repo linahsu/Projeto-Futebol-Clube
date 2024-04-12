@@ -5,12 +5,15 @@ const match =   {
   "awayTeamId": 9,
   "awayTeamGoals": 0,
   "inProgress": true,
-  "homeTeam": {
-    "teamName": "São Paulo"
-  },
-  "awayTeam": {
-    "teamName": "Internacional"
-  }
+};
+
+const updatedMatch =   {
+  "id": 41,
+  "homeTeamId": 16,
+  "homeTeamGoals": 3,
+  "awayTeamId": 9,
+  "awayTeamGoals": 1,
+  "inProgress": true,
 };
 
 const matches = [
@@ -108,6 +111,7 @@ const matchesNotInProgress = [
 
 export default {
   match,
+  updatedMatch,
   matches,
   matchesInProgress,
   matchesNotInProgress,
