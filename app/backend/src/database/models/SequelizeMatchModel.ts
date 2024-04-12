@@ -6,6 +6,7 @@ import {
   CreationOptional,
 } from 'sequelize';
 import db from '.';
+import SequelizeUserModel from './SequelizeUserModel';
 // import OtherModel from './OtherModel';
 
 class SequelizeMatchModel extends Model<InferAttributes<SequelizeMatchModel>,
@@ -69,6 +70,11 @@ SequelizeMatchModel.init({
   underscored: true,
 });
 
+SequelizeMatchModel.belongsTo(SequelizeUserModel, {
+  foreignKey: 'homeTeamId', as: 'homeTeam' });
+
+SequelizeMatchModel.belongsTo(SequelizeUserModel, {
+  foreignKey: 'awayTeamId', as: 'awayTeam' });
 /**
   * `Workaround` para aplicar as associations em TS:
   * Associations 1:N devem ficar em uma das instâncias de modelo
