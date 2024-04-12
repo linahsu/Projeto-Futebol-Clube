@@ -10,17 +10,18 @@ import matchMock from './mocks/match.mock';
 
 import { Response } from 'superagent';
 import { Model } from 'sequelize';
+import SequelizeUserModel from '../database/models/SequelizeUserModel';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('INTEGRATION TESTS - MATCHES', () => {
+describe('INTEGRATION TESTS - GET MATCHES', () => {
   beforeEach(function () { sinon.restore(); });
 
   let chaiHttpResponse: Response;
 
-  it('Lista todos os jogos com sucesso', async function () {
+  it('Lista todas as partidas com sucesso', async function () {
     // Arrange
     sinon
       .stub(SequelizeMatchModel, 'findAll')
@@ -34,7 +35,7 @@ describe('INTEGRATION TESTS - MATCHES', () => {
     expect(chaiHttpResponse.body).to.deep.equal(matchMock.matches);
   });
 
-  it('Lista todos os jogos em progresso com sucesso', async function () {
+  it('Lista todas as partidas em progresso com sucesso', async function () {
     // Arrange
     sinon
       .stub(SequelizeMatchModel, 'findAll')
@@ -48,7 +49,7 @@ describe('INTEGRATION TESTS - MATCHES', () => {
     expect(chaiHttpResponse.body).to.deep.equal(matchMock.matchesInProgress);
   });
 
-  it('Lista todos os jogos que não estão em progresso com sucesso', async function () {
+  it('Lista todas as partidas que não estão em progresso com sucesso', async function () {
     // Arrange
     sinon
       .stub(SequelizeMatchModel, 'findAll')
@@ -60,5 +61,54 @@ describe('INTEGRATION TESTS - MATCHES', () => {
     // Assert
     expect(chaiHttpResponse.status).to.be.eq(200);
     expect(chaiHttpResponse.body).to.deep.equal(matchMock.matchesNotInProgress);
+  });
+});
+
+describe('INTEGRATION TESTS - PATCH MATCHES', () => {
+  beforeEach(function () { sinon.restore(); });
+
+  let chaiHttpResponse: Response;
+
+  it('Altera a chave inProgress para false quando uma partida é finalizada com sucesso', async function () {
+    // Arrange
+    sinon
+      .stub(SequelizeMatchModel, 'update')
+      .resolves([1]);
+
+    const token = 'Bearer huanlnklmç2729xjwhdiwon789u0cnjscn';
+
+    // Act
+    chaiHttpResponse = await chai.request(app).patch('/matches/1/finish')
+      .set('authorization', token);
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Finished' });
+  });
+  it('Erro ao tentar finalizar uma partida sem o token', async function () {
+    // Arrange
+
+    // Act
+    chaiHttpResponse = await chai.request(app).patch('/matches/1/finish');
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(401);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Token not found' });
+  });
+  it('Erro ao tentar finalizar uma partida com um token inválido', async function () {
+    // Arrange
+    sinon
+      .stub(SequelizeUserModel, 'findOne')
+      .resolves(null);
+
+    const token = 'Bearer huanlnklmç2729xjwhdiwon789u0cnjscn';
+
+    // Act
+    chaiHttpResponse = await chai.request(app).patch('/matches/1/finish')
+      .set('authorization', token);
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(401);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Token must be a valid token' });
   });
 });
