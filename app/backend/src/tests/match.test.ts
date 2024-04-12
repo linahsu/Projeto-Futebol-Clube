@@ -12,7 +12,10 @@ import { Response } from 'superagent';
 import { Model } from 'sequelize';
 import SequelizeUserModel from '../database/models/SequelizeUserModel';
 import loginMock from './mocks/login.mock';
+import teamMock from './mocks/team.mock';
 import IUser from '../Interfaces/IUser';
+import SequelizeTeamModel from '../database/models/SequelizeTeamModel';
+import ITeam from '../Interfaces/ITeam';
 
 chai.use(chaiHttp);
 
@@ -207,15 +210,13 @@ describe('INTEGRATION TESTS - POST MATCHES', () => {
       .resolves(loginMock.user as unknown as Model<IUser>);
     // stub from MatchModel
     sinon
-      .stub(SequelizeMatchModel, 'create')
-      .resolves();
-    (SequelizeMatchModel.findOne as sinon.SinonStub).restore();
-
+    .stub(SequelizeTeamModel, 'findAll')
+    .resolves(teamMock.teams as unknown as Model<ITeam>[]);
     sinon
-      .stub(SequelizeMatchModel, 'findOne')
+      .stub(SequelizeMatchModel, 'create')
       .resolves(matchMock.createdMatch as unknown as Model<IMatch>);
 
-    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjg2Mzg3MX0.A-QAreLjBQnAsQvdH8jH470lkMX8qMi_G9R6O-450-U'
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjk0NTEwOX0.4KFx9faV8UqT-hhFGoE4wGo0zM1Zs3LjaIn2tdnQfdc';
 
     // Act
     chaiHttpResponse = await chai.request(app).post('/matches')
@@ -232,7 +233,7 @@ describe('INTEGRATION TESTS - POST MATCHES', () => {
     expect(chaiHttpResponse.body).to.deep.equal(matchMock.createdMatch);
   });
 
-  it('Error ao cadastrar uma nova partida sem um token', async function () {
+  it('Erro ao cadastrar uma nova partida sem um token', async function () {
     // Arrange
 
     // Act
@@ -249,11 +250,55 @@ describe('INTEGRATION TESTS - POST MATCHES', () => {
     expect(chaiHttpResponse.body).to.deep.equal({ message: 'Token not found' });
   });
 
-  it('Error ao cadastrar uma nova partida com dois times iguais na requisição', async function () {
+  it('Erro ao cadastrar uma nova partida com dois times iguais na requisição', async function () {
+    // Arrange
+    // stub from authToken
+    sinon
+      .stub(SequelizeUserModel, 'findOne')
+      .resolves(loginMock.user as unknown as Model<IUser>);
 
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjk0NTEwOX0.4KFx9faV8UqT-hhFGoE4wGo0zM1Zs3LjaIn2tdnQfdc';
+
+    // Act
+    chaiHttpResponse = await chai.request(app).post('/matches')
+      .send({
+        homeTeamId: 3,
+        awayTeamId: 8,
+        homeTeamGoals: 3,
+        awayTeamGoals: 2
+      })
+      .set('authorization', token);
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(422);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'It is not possible to create a match with two equal teams' });
   });
 
-  it('Error ao cadastrar uma nova partida com um time que não existe no banco de dados', async function () {
+  it('Erro ao cadastrar uma nova partida com um time que não existe no banco de dados', async function () {
+    // Arrange
+    // stub from authToken
+    sinon
+      .stub(SequelizeUserModel, 'findOne')
+      .resolves(loginMock.user as unknown as Model<IUser>);
+    // stub from MatchModel
+    sinon
+      .stub(SequelizeTeamModel, 'findAll')
+      .resolves(teamMock.teams as unknown as Model<ITeam>[]);
 
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjk0NTEwOX0.4KFx9faV8UqT-hhFGoE4wGo0zM1Zs3LjaIn2tdnQfdc';
+
+    // Act
+    chaiHttpResponse = await chai.request(app).post('/matches')
+      .send({
+        homeTeamId: 90,
+        awayTeamId: 8,
+        homeTeamGoals: 3,
+        awayTeamGoals: 2
+      })
+      .set('authorization', token);
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(404);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'There is no team with such id!' });
   });
 });
