@@ -91,7 +91,7 @@ describe('INTEGRATION TESTS - LOGIN/ROLE', () => {
       .stub(SequelizeUserModel, 'findOne')
       .resolves(loginMock.user as unknown as Model<IUser>);
     
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjg2Mzg3MX0.A-QAreLjBQnAsQvdH8jH470lkMX8qMi_G9R6O-450-U'
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjg2Mzg3MX0.A-QAreLjBQnAsQvdH8jH470lkMX8qMi_G9R6O-450-U'
 
     // Act
     chaiHttpResponse = await chai.request(app).get('/login/role').set('authorization', token);
@@ -118,13 +118,13 @@ describe('INTEGRATION TESTS - LOGIN/ROLE', () => {
       .stub(SequelizeUserModel, 'findOne')
       .resolves(null);
     
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjg2Mzg3MX0.A-QAreLjBQnAsQvdH8jH470lkMX8qMi_G9R6O-450-U'
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjg2Mzg3MX0.A-QAreLjBQnAsQvdH8jH470lkMX8qMi_G9R6O-450-U'
 
     // Act
     chaiHttpResponse = await chai.request(app).get('/login/role').set('authorization', token);
 
     // Assert
-    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.status).to.be.eq(401);
     expect(chaiHttpResponse.body).to.deep.eq({ message: 'Token must be a valid token' });
   });
 });
