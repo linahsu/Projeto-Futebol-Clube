@@ -1,9 +1,9 @@
 import SequelizeTeamModel from '../database/models/SequelizeTeamModel';
 import SequelizeMatchModel from '../database/models/SequelizeMatchModel';
 import IMatch from '../Interfaces/IMatch';
-import { IReadAll, IReadByQuery } from '../Interfaces/IModel';
+import { IMatchModel } from '../Interfaces/IModel';
 
-export default class MatchModel implements IReadAll<IMatch>, IReadByQuery<IMatch> {
+export default class MatchModel implements IMatchModel<IMatch> {
   private _matchModel = SequelizeMatchModel;
 
   async getAll(): Promise<IMatch[]> {
@@ -34,5 +34,12 @@ export default class MatchModel implements IReadAll<IMatch>, IReadByQuery<IMatch
     });
 
     return matches;
+  }
+
+  async updateFinish(id: number): Promise<void> {
+    const match = await this._matchModel.findOne({ where: { id } });
+    if (match) {
+      await match.update({ inProgress: false });
+    }
   }
 }

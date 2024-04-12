@@ -72,13 +72,16 @@ describe('INTEGRATION TESTS - PATCH MATCHES', () => {
   it('Altera a chave inProgress para false quando uma partida é finalizada com sucesso', async function () {
     // Arrange
     sinon
+      .stub(SequelizeMatchModel, 'findOne')
+      .resolves(matchMock.match as unknown as Model<IMatch>);
+    sinon
       .stub(SequelizeMatchModel, 'update')
-      .resolves([1]);
+      .resolves();
 
     const token = 'Bearer huanlnklmç2729xjwhdiwon789u0cnjscn';
 
     // Act
-    chaiHttpResponse = await chai.request(app).patch('/matches/1/finish')
+    chaiHttpResponse = await chai.request(app).patch('/matches/41/finish')
       .set('authorization', token);
 
     // Assert

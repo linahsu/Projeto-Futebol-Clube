@@ -1,10 +1,10 @@
 import { ServiceResponse } from '../types/ServiceResponse';
 import IMatch from '../Interfaces/IMatch';
-import { IReadAll, IReadByQuery } from '../Interfaces/IModel';
+import { IMatchModel } from '../Interfaces/IModel';
 import MatchModel from '../models/MatchModel';
 
 export default class MatchService {
-  constructor(private _matchModel: IReadAll<IMatch> & IReadByQuery<IMatch> = new MatchModel()) {}
+  constructor(private _matchModel: IMatchModel<IMatch> = new MatchModel()) {}
 
   async getAll(): Promise<ServiceResponse<IMatch[]>> {
     const matches = await this._matchModel.getAll();
@@ -14,5 +14,10 @@ export default class MatchService {
   async getByQuery(query: string): Promise<ServiceResponse<IMatch[]>> {
     const matches = await this._matchModel.getByQuery(query);
     return { status: 'successful', data: matches };
+  }
+
+  async updateFinish(id: number): Promise<ServiceResponse<{ message: string }>> {
+    await this._matchModel.updateFinish(id);
+    return { status: 'successful', data: { message: 'Finished' } };
   }
 }
