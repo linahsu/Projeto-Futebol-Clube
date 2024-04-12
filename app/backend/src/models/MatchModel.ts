@@ -17,13 +17,22 @@ export default class MatchModel implements IReadAll<IMatch>, IReadByQuery<IMatch
   }
 
   async getByQuery(query: string): Promise<IMatch[]> {
+    let whereCondition = {};
+    if (query === 'true') {
+      whereCondition = { inProgress: true };
+    }
+    if (query === 'false') {
+      whereCondition = { inProgress: false };
+    }
+
     const matches = await this._matchModel.findAll({
-      where: { inProgress: query },
+      where: whereCondition,
       include: [
         { model: SequelizeTeamModel, as: 'homeTeam', attributes: { exclude: ['id'] } },
         { model: SequelizeTeamModel, as: 'awayTeam', attributes: { exclude: ['id'] } },
       ],
     });
+
     return matches;
   }
 }
