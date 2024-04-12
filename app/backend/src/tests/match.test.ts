@@ -34,31 +34,31 @@ describe('INTEGRATION TESTS - MATCHES', () => {
     expect(chaiHttpResponse.body).to.deep.equal(matchMock.matches);
   });
 
-  // it('Lista um time com id existente com sucesso', async function () {
-  //   // Arrange
-  //   sinon
-  //     .stub(SequelizeTeamModel, 'findOne')
-  //     .resolves(teamMock.team as unknown as Model<ITeam>);
+  it('Lista todos os jogos em progresso com sucesso', async function () {
+    // Arrange
+    sinon
+      .stub(SequelizeMatchModel, 'findAll')
+      .resolves(matchMock.matchesInProgress as unknown as Model<IMatch>[]);
 
-  //   // Act
-  //   chaiHttpResponse = await chai.request(app).get('/teams/1');
+    // Act
+    chaiHttpResponse = await chai.request(app).get('/matches?inProgress=true');
 
-  //   // Assert
-  //   expect(chaiHttpResponse.status).to.be.eq(200);
-  //   expect(chaiHttpResponse.body).to.deep.equal(teamMock.team);
-  // });
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body).to.deep.equal(matchMock.matchesInProgress);
+  });
 
-  // it('Erro ao listar um time com id inexistente', async function () {
-  //   // Arrange
-  //   sinon
-  //     .stub(SequelizeTeamModel, 'findOne')
-  //     .resolves(null);
+  it('Lista todos os jogos que não estão em progresso com sucesso', async function () {
+    // Arrange
+    sinon
+      .stub(SequelizeMatchModel, 'findAll')
+      .resolves(matchMock.matchesNotInProgress as unknown as Model<IMatch>[]);
 
-  //   // Act
-  //   chaiHttpResponse = await chai.request(app).get('/teams/123');
+    // Act
+    chaiHttpResponse = await chai.request(app).get('/matches?inProgress=false');
 
-  //   // Assert
-  //   expect(chaiHttpResponse.status).to.be.eq(404);
-  //   expect(chaiHttpResponse.body).to.deep.equal({ message: 'Team not found' });
-  // });
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body).to.deep.equal(matchMock.matchesNotInProgress);
+  });
 });
