@@ -43,12 +43,11 @@ export default class MatchModel implements IMatchModel<IMatch> {
     }
   }
 
-  async update(id: number, data: Partial<IMatch>): Promise<IMatch | null> {
+  async update(id: number, data: Partial<IMatch>): Promise<Partial<IMatch> | null> {
     const match = await this._matchModel.findOne({ where: { id } });
     if (match && match.inProgress === true) {
       await match.update(data);
-      const updatedMatch = await this._matchModel.findOne({ where: { id } });
-      return updatedMatch;
+      return data;
     }
     return null;
   }

@@ -21,7 +21,7 @@ export default class MatchService {
     return { status: 'successful', data: { message: 'Finished' } };
   }
 
-  async update(id: number, data: Partial<IMatch>): Promise<ServiceResponse<IMatch>> {
+  async update(id: number, data: Partial<IMatch>): Promise<ServiceResponse<Partial<IMatch>>> {
     const updatedMatch = await this._matchModel.update(id, data);
     if (!updatedMatch) {
       return { status: 'badRequest', data: { message: 'Match not found or match finished' } };

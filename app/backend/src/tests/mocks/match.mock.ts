@@ -16,6 +16,15 @@ const updatedMatch =   {
   "inProgress": true,
 };
 
+const createdMatch =   {
+  "id": 60,
+  "homeTeamId": 4,
+  "homeTeamGoals": 0,
+  "awayTeamId": 10,
+  "awayTeamGoals": 2,
+  "inProgress": true,
+};
+
 const matches = [
   {
     "id": 1,
@@ -112,6 +121,7 @@ const matchesNotInProgress = [
 export default {
   match,
   updatedMatch,
+  createdMatch,
   matches,
   matchesInProgress,
   matchesNotInProgress,

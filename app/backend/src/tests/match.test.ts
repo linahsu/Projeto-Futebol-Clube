@@ -71,31 +71,32 @@ describe('INTEGRATION TESTS - PATCH MATCHES', () => {
 
   let chaiHttpResponse: Response;
 
-  // it('Altera a chave inProgress para false quando uma partida é finalizada com sucesso', async function () {
-  //   // Arrange
-  //   // stub from authToken
-  //   sinon
-  //     .stub(SequelizeUserModel, 'findOne')
-  //     .resolves(loginMock.user as unknown as Model<IUser>);
-  //   // stub from MatchModel 
-  //   sinon
-  //     .stub(SequelizeMatchModel, 'findOne')
-  //     .resolves(matchMock.match as unknown as Model<IMatch>);
-  //   sinon
-  //     .stub(SequelizeMatchModel, 'update')
-  //     .resolves();
+  it('Altera a chave inProgress para false quando uma partida é finalizada com sucesso', async function () {
+    // Arrange
+    // stub from authToken
+    sinon
+      .stub(SequelizeUserModel, 'findOne')
+      .resolves(loginMock.user as unknown as Model<IUser>);
+    // stub from MatchModel 
+    const mockFindOneReturn = SequelizeMatchModel.build(matchMock.match);
+    sinon
+      .stub(SequelizeMatchModel, 'findOne')
+      .resolves(mockFindOneReturn);
+    sinon
+      .stub(mockFindOneReturn, 'update')
+      .resolves();
 
-  //     const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXN';
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjk0NTEwOX0.4KFx9faV8UqT-hhFGoE4wGo0zM1Zs3LjaIn2tdnQfdc';
 
-  //   // Act
-  //   chaiHttpResponse = await chai.request(app).patch('/matches/41/finish')
-  //     .set('authorization', token);
+    // Act
+    chaiHttpResponse = await chai.request(app).patch('/matches/41/finish')
+      .set('authorization', token);
 
-  //   // Assert
-  //   expect(chaiHttpResponse.status).to.be.eq(200);
-  //   expect(chaiHttpResponse.body).to.deep.equal({ message: 'Finished' });
-  // });
-  
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Finished' });
+  });
+
   it('Erro ao tentar finalizar uma partida sem o token', async function () {
     // Arrange
 
@@ -130,14 +131,15 @@ describe('INTEGRATION TESTS - PATCH MATCHES', () => {
     sinon.stub(SequelizeUserModel, 'findOne')
       .resolves(loginMock.user as unknown as Model<IUser>);
     // stub from MatchModel
+    const mockFindOneReturn = SequelizeMatchModel.build(matchMock.match);
     sinon
       .stub(SequelizeMatchModel, 'findOne')
-      .resolves(matchMock.match as unknown as Model<IMatch>);
+      .resolves(mockFindOneReturn);
     sinon
-      .stub(SequelizeMatchModel, 'update')
+      .stub(mockFindOneReturn, 'update')
       .resolves();
 
-    const token = 'Bearer huanlnklmç2729xjwhdiwon789u0cnjscn';
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjk0NTEwOX0.4KFx9faV8UqT-hhFGoE4wGo0zM1Zs3LjaIn2tdnQfdc';
 
     // Act
     chaiHttpResponse = await chai.request(app).patch('/matches/1')
@@ -149,7 +151,10 @@ describe('INTEGRATION TESTS - PATCH MATCHES', () => {
 
     // Assert
     expect(chaiHttpResponse.status).to.be.eq(200);
-    expect(chaiHttpResponse.body).to.deep.equal(matchMock.updatedMatch);
+    expect(chaiHttpResponse.body).to.deep.equal({
+      homeTeamGoals: 3,
+      awayTeamGoals: 1,
+    });
   });
 
   it('Erro ao tentar atualizar uma partida sem o token', async function () {
@@ -186,5 +191,69 @@ describe('INTEGRATION TESTS - PATCH MATCHES', () => {
     // Assert
     expect(chaiHttpResponse.status).to.be.eq(401);
     expect(chaiHttpResponse.body).to.deep.equal({ message: 'Token must be a valid token' });
+  });
+});
+
+describe('INTEGRATION TESTS - POST MATCHES', () => {
+  beforeEach(function () { sinon.restore(); });
+
+  let chaiHttpResponse: Response;
+
+  it('Cadastra uma nova partida em andamento com sucesso', async function () {
+    // Arrange
+    // stub from authToken
+    sinon
+      .stub(SequelizeUserModel, 'findOne')
+      .resolves(loginMock.user as unknown as Model<IUser>);
+    // stub from MatchModel
+    sinon
+      .stub(SequelizeMatchModel, 'create')
+      .resolves();
+    (SequelizeMatchModel.findOne as sinon.SinonStub).restore();
+
+    sinon
+      .stub(SequelizeMatchModel, 'findOne')
+      .resolves(matchMock.createdMatch as unknown as Model<IMatch>);
+
+    const token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsImlhdCI6MTcxMjg2Mzg3MX0.A-QAreLjBQnAsQvdH8jH470lkMX8qMi_G9R6O-450-U'
+
+    // Act
+    chaiHttpResponse = await chai.request(app).post('/matches')
+      .send({
+        homeTeamId: 16,
+        awayTeamId: 8,
+        homeTeamGoals: 2,
+        awayTeamGoals: 2
+      })
+      .set('authorization', token);
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body).to.deep.equal(matchMock.createdMatch);
+  });
+
+  it('Error ao cadastrar uma nova partida sem um token', async function () {
+    // Arrange
+
+    // Act
+    chaiHttpResponse = await chai.request(app).post('/matches')
+      .send({
+        homeTeamId: 16,
+        awayTeamId: 8,
+        homeTeamGoals: 2,
+        awayTeamGoals: 2
+      });
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(401);
+    expect(chaiHttpResponse.body).to.deep.equal({ message: 'Token not found' });
+  });
+
+  it('Error ao cadastrar uma nova partida com dois times iguais na requisição', async function () {
+
+  });
+
+  it('Error ao cadastrar uma nova partida com um time que não existe no banco de dados', async function () {
+
   });
 });

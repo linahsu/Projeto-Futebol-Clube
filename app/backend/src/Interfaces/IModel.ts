@@ -15,7 +15,7 @@ export interface IReadByQuery<T> {
 }
 
 export interface IUpdate<T> {
-  update(id: number, data: Partial<T>): Promise<T | null>;
+  update(id: number, data: Partial<T>): Promise<Partial<T> | null>;
 }
 
 export interface IUpdateFinish {
