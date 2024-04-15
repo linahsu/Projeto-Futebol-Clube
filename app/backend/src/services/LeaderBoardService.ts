@@ -13,6 +13,8 @@ const initialTeamResult = {
   totalLosses: 0,
   goalsFavor: 0,
   goalsOwn: 0,
+  goalsBalance: 0,
+  efficiency: 0,
 };
 
 const initialHomeTeam: string[] = [];
@@ -36,6 +38,7 @@ function getTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBoard 
     const { gameStatus, points } = getPoints(match.homeTeamGoals, match.awayTeamGoals);
 
     const result = {
+      ...acc,
       name: match.homeTeam.teamName,
       totalPoints: acc.totalPoints + points,
       totalGames: acc.totalGames + 1,
@@ -45,6 +48,9 @@ function getTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBoard 
       goalsFavor: acc.goalsFavor + match.homeTeamGoals,
       goalsOwn: acc.goalsOwn + match.awayTeamGoals,
     };
+
+    result.goalsBalance = result.goalsFavor - result.goalsOwn;
+    result.efficiency = Number(((result.totalPoints / (result.totalGames * 3)) * 100).toFixed(2));
 
     return result;
   }, initialTeamResult);
@@ -82,6 +88,11 @@ export default class LeaderBoardService {
 
       return teamResult;
     });
+
+    getHomeTeamsPerformance
+      .sort((a, b) => b.goalsFavor - a.goalsFavor)
+      .sort((a, b) => b.goalsBalance - a.goalsBalance)
+      .sort((a, b) => b.totalVictories - a.totalVictories);
 
     return { status: 'successful', data: getHomeTeamsPerformance };
   }
