@@ -32,18 +32,18 @@ function getPoints(homeGoals: number, awayGoals: number): { gameStatus: string, 
 }
 
 function getTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBoard {
-  const teamResult = currentTeamMatches.reduce((acc, team) => {
-    const { gameStatus, points } = getPoints(team.homeTeamGoals, team.awayTeamGoals);
+  const teamResult = currentTeamMatches.reduce((acc, match) => {
+    const { gameStatus, points } = getPoints(match.homeTeamGoals, match.awayTeamGoals);
 
     const result = {
-      name: team.homeTeam.teamName,
-      totalPoints: acc.totalPoints += points,
-      totalGames: acc.totalGames += 1,
-      totalVictories: gameStatus === 'victory' ? acc.totalVictories += 1 : acc.totalVictories,
-      totalDraws: gameStatus === 'draw' ? acc.totalDraws += 1 : acc.totalDraws,
-      totalLosses: gameStatus === 'loss' ? acc.totalLosses += 1 : acc.totalLosses,
-      goalsFavor: acc.goalsFavor += team.homeTeamGoals,
-      goalsOwn: acc.goalsOwn += team.awayTeamGoals,
+      name: match.homeTeam.teamName,
+      totalPoints: acc.totalPoints + points,
+      totalGames: acc.totalGames + 1,
+      totalVictories: gameStatus === 'victory' ? acc.totalVictories + 1 : acc.totalVictories,
+      totalDraws: gameStatus === 'draw' ? acc.totalDraws + 1 : acc.totalDraws,
+      totalLosses: gameStatus === 'loss' ? acc.totalLosses + 1 : acc.totalLosses,
+      goalsFavor: acc.goalsFavor + match.homeTeamGoals,
+      goalsOwn: acc.goalsOwn + match.awayTeamGoals,
     };
 
     return result;
@@ -70,13 +70,14 @@ export default class LeaderBoardService {
 
   async getHomeTeamsPerformance(): Promise<ServiceResponse<ILeaderBoard[]>> {
     const { finishedMatches, homeTeams } = await this.getHomeTeams();
-    console.log(homeTeams);
 
     const getHomeTeamsPerformance = homeTeams.map((team) => {
       const currentTeamMatches = finishedMatches
         .filter((match) => match.homeTeam.teamName === team);
-      // console.log(currentTeamMatches);
-      return getTeamResult(currentTeamMatches);
+
+      const teamResult = getTeamResult(currentTeamMatches);
+
+      return teamResult;
     });
 
     return { status: 'successful', data: getHomeTeamsPerformance };
