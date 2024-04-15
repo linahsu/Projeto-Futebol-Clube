@@ -22,5 +22,10 @@ export interface IUpdateFinish {
   updateFinish(id: number): Promise<void>;
 }
 
+export interface createMatch<T> {
+  createMatch(data: Omit<T, 'id' & 'inProgress'>): Promise<T>;
+}
+
 export interface IRead<T> extends IReadAll<T>, IReadById<T> {}
-export interface IMatchModel<T> extends IReadAll<T>, IReadByQuery<T>, IUpdateFinish, IUpdate<T> {}
+export interface IMatchModel<T> extends IReadAll<T>,
+  IReadByQuery<T>, IUpdateFinish, IUpdate<T>, createMatch<T> {}

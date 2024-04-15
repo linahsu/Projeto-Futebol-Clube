@@ -51,4 +51,12 @@ export default class MatchModel implements IMatchModel<IMatch> {
     }
     return null;
   }
+
+  async createMatch(data: Omit<IMatch, 'id' & 'inProgres'>): Promise<IMatch> {
+    const createdMatch = await this._matchModel.create({
+      ...data,
+      inProgress: true,
+    });
+    return createdMatch;
+  }
 }

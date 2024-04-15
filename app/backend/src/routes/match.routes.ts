@@ -16,5 +16,10 @@ matchRouter.patch(
   authToken,
   (req: Request, res: Response) => matchController.updateFinish(req, res),
 );
+matchRouter.post(
+  '/',
+  authToken,
+  (req: Request, res: Response) => matchController.createMatch(req, res),
+);
 
 export default matchRouter;

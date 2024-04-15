@@ -1,7 +1,7 @@
 export type ServiceResponseMessage = { message: string };
 
 export type ServiceResponseErrorStatus =
-'invalidValue' | 'unauthorized' | 'notFound' | 'badRequest';
+'invalidValue' | 'unauthorized' | 'notFound' | 'badRequest' | 'unprocessableEntity';
 
 export type ServiceResponseSuccessfulStatus = 'successful' | 'created';
 
