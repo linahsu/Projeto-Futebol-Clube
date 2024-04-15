@@ -15,6 +15,8 @@ const initialTeamResult = {
   goalsOwn: 0,
 };
 
+const initialHomeTeam: string[] = [];
+
 function getPoints(homeGoals: number, awayGoals: number): { gameStatus: string, points: number } {
   let points = 0;
   let gameStatus = 'loss';
@@ -55,16 +57,25 @@ export default class LeaderBoardService {
 
   async getHomeTeams(): Promise<{ finishedMatches: IMatchWithTeamNames[], homeTeams: string[] }> {
     const finishedMatches = await this._leaderBoardModel.getAll();
-    const homeTeams = finishedMatches.map((match) => match.homeTeam.teamName);
+
+    const homeTeams = finishedMatches.reduce((acc, match) => {
+      if (!acc.includes(match.homeTeam.teamName)) {
+        return [...acc, match.homeTeam.teamName];
+      }
+      return acc;
+    }, initialHomeTeam);
+
     return { finishedMatches, homeTeams };
   }
 
   async getHomeTeamsPerformance(): Promise<ServiceResponse<ILeaderBoard[]>> {
     const { finishedMatches, homeTeams } = await this.getHomeTeams();
+    console.log(homeTeams);
 
     const getHomeTeamsPerformance = homeTeams.map((team) => {
       const currentTeamMatches = finishedMatches
         .filter((match) => match.homeTeam.teamName === team);
+      // console.log(currentTeamMatches);
       return getTeamResult(currentTeamMatches);
     });
 
