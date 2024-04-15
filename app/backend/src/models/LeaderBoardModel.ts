@@ -1,14 +1,14 @@
 import SequelizeMatchModel from '../database/models/SequelizeMatchModel';
-import { IReadAll } from '../Interfaces/IModel';
+import { IReadAllProgress } from '../Interfaces/IModel';
 import { IMatchWithTeamNames } from '../Interfaces/IMatch';
 import SequelizeTeamModel from '../database/models/SequelizeTeamModel';
 
-export default class LeaderBoardModel implements IReadAll<IMatchWithTeamNames> {
+export default class LeaderBoardModel implements IReadAllProgress<IMatchWithTeamNames> {
   private _matchModel = SequelizeMatchModel;
 
-  async getAll(): Promise<IMatchWithTeamNames[]> {
+  async getAll(progress: boolean): Promise<IMatchWithTeamNames[]> {
     const finishedMatches = await this._matchModel.findAll({
-      where: { inProgress: false },
+      where: { inProgress: progress },
       include: [
         { model: SequelizeTeamModel, as: 'homeTeam', attributes: { exclude: ['id'] } },
         { model: SequelizeTeamModel, as: 'awayTeam', attributes: { exclude: ['id'] } },

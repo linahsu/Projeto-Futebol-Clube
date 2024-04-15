@@ -1,6 +1,6 @@
 import LeaderBoardModel from '../models/LeaderBoardModel';
 import { IMatchWithTeamNames } from '../Interfaces/IMatch';
-import { IReadAll } from '../Interfaces/IModel';
+import { IReadAllProgress } from '../Interfaces/IModel';
 import { ServiceResponse } from '../types/ServiceResponse';
 import ILeaderBoard from '../Interfaces/ILeaderBoard';
 
@@ -53,10 +53,13 @@ function getTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBoard 
 }
 
 export default class LeaderBoardService {
-  constructor(private _leaderBoardModel: IReadAll<IMatchWithTeamNames> = new LeaderBoardModel()) { }
+  constructor(
+    private _leaderBoardModel: IReadAllProgress<IMatchWithTeamNames> = new LeaderBoardModel(),
+  ) { }
 
-  async getHomeTeams(): Promise<{ finishedMatches: IMatchWithTeamNames[], homeTeams: string[] }> {
-    const finishedMatches = await this._leaderBoardModel.getAll();
+  async getTeamsByProgress(progress: boolean):
+  Promise<{ finishedMatches: IMatchWithTeamNames[], homeTeams: string[] }> {
+    const finishedMatches = await this._leaderBoardModel.getAll(progress);
 
     const homeTeams = finishedMatches.reduce((acc, match) => {
       if (!acc.includes(match.homeTeam.teamName)) {
@@ -69,7 +72,7 @@ export default class LeaderBoardService {
   }
 
   async getHomeTeamsPerformance(): Promise<ServiceResponse<ILeaderBoard[]>> {
-    const { finishedMatches, homeTeams } = await this.getHomeTeams();
+    const { finishedMatches, homeTeams } = await this.getTeamsByProgress(false);
 
     const getHomeTeamsPerformance = homeTeams.map((team) => {
       const currentTeamMatches = finishedMatches

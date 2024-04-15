@@ -2,6 +2,10 @@ export interface IReadAll<T> {
   getAll(): Promise<T[]>;
 }
 
+export interface IReadAllProgress<T> {
+  getAll(progress: boolean): Promise<T[]>;
+}
+
 export interface IReadById<T> {
   getById(id: number): Promise<T | null>;
 }
@@ -31,4 +35,4 @@ export interface IRead<T> extends IReadAll<T>, IReadById<T> {}
 export interface IMatchModel<T> extends IReadAll<T>,
   IReadByQuery<T>, IUpdateFinish, IUpdate<T>, createMatch<T> {}
 
-// export interface ILeaderBoard<T> extends IReadAll<T> {}
+// export interface ILeaderBoard<T> extends IReadAllProgress<T> {}
