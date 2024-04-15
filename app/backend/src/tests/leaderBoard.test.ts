@@ -20,7 +20,7 @@ describe('INTEGRATION TESTS - LOGIN', () => {
 
   let chaiHttpResponse: Response;
 
-  it('Lista as informações de desempenho dos times da casa com sucesso', async function () {
+  it('Lista as informações de desempenho dos times da casa com sucesso na ordem correta', async function () {
     // Arrange
     sinon
       .stub(SequelizeMatchModel, 'findAll')
