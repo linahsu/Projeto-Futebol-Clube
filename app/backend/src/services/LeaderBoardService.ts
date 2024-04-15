@@ -92,7 +92,8 @@ export default class LeaderBoardService {
     getHomeTeamsPerformance
       .sort((a, b) => b.goalsFavor - a.goalsFavor)
       .sort((a, b) => b.goalsBalance - a.goalsBalance)
-      .sort((a, b) => b.totalVictories - a.totalVictories);
+      .sort((a, b) => b.totalVictories - a.totalVictories)
+      .sort((a, b) => b.totalPoints - a.totalPoints);
 
     return { status: 'successful', data: getHomeTeamsPerformance };
   }
