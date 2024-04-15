@@ -7,6 +7,4 @@ export default interface ILeaderBoard {
   totalLosses: number,
   goalsFavor: number,
   goalsOwn: number,
-  goalsBalance: number,
-  efficiency: number
 }

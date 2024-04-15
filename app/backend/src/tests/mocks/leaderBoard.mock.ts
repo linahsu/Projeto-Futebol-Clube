@@ -147,5 +147,6 @@ const homeTeams = [
 ];
 
 export default {
+  matches,
   homeTeams,
 };

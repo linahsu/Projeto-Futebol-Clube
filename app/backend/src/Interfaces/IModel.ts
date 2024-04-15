@@ -27,5 +27,8 @@ export interface createMatch<T> {
 }
 
 export interface IRead<T> extends IReadAll<T>, IReadById<T> {}
+
 export interface IMatchModel<T> extends IReadAll<T>,
   IReadByQuery<T>, IUpdateFinish, IUpdate<T>, createMatch<T> {}
+
+// export interface ILeaderBoard<T> extends IReadAll<T> {}

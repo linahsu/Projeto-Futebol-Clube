@@ -20,20 +20,17 @@ describe('INTEGRATION TESTS - LOGIN', () => {
 
   let chaiHttpResponse: Response;
 
-  it('Realiza login com sucesso, retornando um token', async function () {
+  it('Lista as informações de desempenho dos times da casa com sucesso', async function () {
     // Arrange
     sinon
-      .stub(SequelizeUserModel, 'findOne')
-      .resolves(loginMock.user as unknown as Model<IUser>);
+      .stub(SequelizeMatchModel, 'findAll')
+      .resolves(leaderBoardMock.matches as unknown as Model<IMatch>[]);
 
     // Act
-    chaiHttpResponse = await chai.request(app).post('/login').send({
-      email: 'admin@admin.com',
-      password: 'secret_admin',
-    });
+    chaiHttpResponse = await chai.request(app).get('/leaderboard/home');
 
     // Assert
     expect(chaiHttpResponse.status).to.be.eq(200);
-    expect(chaiHttpResponse.body).to.have.key('token');
+    expect(chaiHttpResponse.body).to.deep.eq(leaderBoardMock.homeTeams);
   });
 });
