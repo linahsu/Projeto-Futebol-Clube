@@ -46,6 +46,7 @@ export default class MatchService {
   async createMatch(data: Omit<IMatch, 'id' & 'inProgress'>): Promise<ServiceResponse<IMatch>> {
     const { homeTeamId, awayTeamId } = data;
     const matchTeamsExists = await findMatchTeams(homeTeamId, awayTeamId);
+
     if (!verifyTeams(homeTeamId, awayTeamId)) {
       return {
         status: 'unprocessableEntity',
@@ -54,6 +55,7 @@ export default class MatchService {
     if (matchTeamsExists.length !== 2) {
       return { status: 'notFound', data: { message: 'There is no team with such id!' } };
     }
+
     const matchCreated = await this._matchModel.createMatch(data);
     return { status: 'created', data: matchCreated };
   }

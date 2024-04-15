@@ -18,9 +18,9 @@ const updatedMatch =   {
 
 const createdMatch =   {
   "id": 60,
-  "homeTeamId": 4,
-  "homeTeamGoals": 0,
-  "awayTeamId": 10,
+  "homeTeamId": 16,
+  "awayTeamId": 8,
+  "homeTeamGoals": 2,
   "awayTeamGoals": 2,
   "inProgress": true,
 };
