@@ -103,7 +103,7 @@ function getAwayTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBo
 
 function getAllTeamsName(homeAndAwayTeams: ILeaderBoard[]): string[] {
   const teams = homeAndAwayTeams.reduce((acc, team) => {
-    if (!initialTeamArray.includes(team.name)) {
+    if (!acc.includes(team.name)) {
       return [...acc, team.name];
     }
     return acc;
@@ -183,9 +183,8 @@ export default class LeaderBoardService {
     const homeTeams = (await this.getTeamsPerformanceByType('homeTeam')).data;
     const awayTeams = (await this.getTeamsPerformanceByType('awayTeam')).data;
     const homeAndAwayTeams = [...homeTeams, ...awayTeams];
-    console.log(homeAndAwayTeams);
+
     const allTeamsName = getAllTeamsName(homeAndAwayTeams);
-    console.log(allTeamsName);
 
     const getAllTeamsPerformance = allTeamsName.map((team) => {
       const currentTeamPerformances = homeAndAwayTeams

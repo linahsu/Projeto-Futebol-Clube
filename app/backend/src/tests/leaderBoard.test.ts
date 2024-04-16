@@ -47,4 +47,18 @@ describe('INTEGRATION TESTS - LOGIN', () => {
     expect(chaiHttpResponse.status).to.be.eq(200);
     expect(chaiHttpResponse.body).to.deep.eq(leaderBoardMock.awayTeams);
   });
+
+  it('Lista as informações de desempenho de todos os times com sucesso na ordem correta', async function () {
+    // Arrange
+    sinon
+      .stub(SequelizeMatchModel, 'findAll')
+      .resolves(leaderBoardMock.matches2 as unknown as Model<IMatch>[]);
+
+    // Act
+    chaiHttpResponse = await chai.request(app).get('/leaderboard/away');
+
+    // Assert
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body).to.deep.eq(leaderBoardMock.awayTeams);
+  });
 });
