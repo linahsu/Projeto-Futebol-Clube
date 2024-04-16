@@ -24,7 +24,7 @@ describe('INTEGRATION TESTS - LOGIN', () => {
     // Arrange
     sinon
       .stub(SequelizeMatchModel, 'findAll')
-      .resolves(leaderBoardMock.matches as unknown as Model<IMatch>[]);
+      .resolves(leaderBoardMock.matches1 as unknown as Model<IMatch>[]);
 
     // Act
     chaiHttpResponse = await chai.request(app).get('/leaderboard/home');
@@ -38,13 +38,13 @@ describe('INTEGRATION TESTS - LOGIN', () => {
     // Arrange
     sinon
       .stub(SequelizeMatchModel, 'findAll')
-      .resolves(leaderBoardMock.matches as unknown as Model<IMatch>[]);
+      .resolves(leaderBoardMock.matches2 as unknown as Model<IMatch>[]);
 
     // Act
     chaiHttpResponse = await chai.request(app).get('/leaderboard/away');
 
     // Assert
     expect(chaiHttpResponse.status).to.be.eq(200);
-    expect(chaiHttpResponse.body).to.deep.eq(leaderBoardMock.homeTeams);
+    expect(chaiHttpResponse.body).to.deep.eq(leaderBoardMock.awayTeams);
   });
 });

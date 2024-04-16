@@ -1,4 +1,4 @@
-const matches = [
+const matches1 = [
   {
     "id": 3,
     "homeTeamId": 4,
@@ -111,7 +111,7 @@ const matches = [
       "teamName": "Grêmio"
     }
   },
-]
+];
 
 const homeTeams = [
   {
@@ -152,7 +152,121 @@ const homeTeams = [
   },
 ];
 
+const matches2 = [
+  {
+    "id": 1,
+    "homeTeamId": 16,
+    "homeTeamGoals": 1,
+    "awayTeamId": 8,
+    "awayTeamGoals": 1,
+    "inProgress": false,
+    "homeTeam": {
+      "teamName": "São Paulo"
+    },
+    "awayTeam": {
+      "teamName": "Grêmio"
+    }
+  },
+  {
+    "id": 17,
+    "homeTeamId": 1,
+    "homeTeamGoals": 2,
+    "awayTeamId": 8,
+    "awayTeamGoals": 3,
+    "inProgress": false,
+    "homeTeam": {
+      "teamName": "Avaí/Kindermann"
+    },
+    "awayTeam": {
+      "teamName": "Grêmio"
+    }
+  },
+  {
+    "id": 18,
+    "homeTeamId": 12,
+    "homeTeamGoals": 4,
+    "awayTeamId": 5,
+    "awayTeamGoals": 2,
+    "inProgress": false,
+    "homeTeam": {
+      "teamName": "Palmeiras"
+    },
+    "awayTeam": {
+      "teamName": "Cruzeiro"
+    }
+  },
+  {
+    "id": 22,
+    "homeTeamId": 4,
+    "homeTeamGoals": 3,
+    "awayTeamId": 3,
+    "awayTeamGoals": 1,
+    "inProgress": false,
+    "homeTeam": {
+      "teamName": "Corinthians"
+    },
+    "awayTeam": {
+      "teamName": "Botafogo"
+    }
+  },
+  {
+    "id": 45,
+    "homeTeamId": 5,
+    "homeTeamGoals": 1,
+    "awayTeamId": 3,
+    "awayTeamGoals": 1,
+    "inProgress": true,
+    "homeTeam": {
+      "teamName": "Cruzeiro"
+    },
+    "awayTeam": {
+      "teamName": "Botafogo"
+    }
+  },
+]
+
+const awayTeams = [
+  {
+    "name": "Grêmio",
+    "totalPoints": 4,
+    "totalGames": 2,
+    "totalVictories": 1,
+    "totalDraws": 1,
+    "totalLosses": 0,
+    "goalsFavor": 4,
+    "goalsOwn": 3,
+    "goalsBalance": 1,
+    "efficiency": 66.67,
+  },
+  {
+    "name": "Botafogo",
+    "totalPoints": 1,
+    "totalGames": 2,
+    "totalVictories": 0,
+    "totalDraws": 1,
+    "totalLosses": 1,
+    "goalsFavor": 2,
+    "goalsOwn": 4,
+    "goalsBalance": -2,
+    "efficiency": 16.67,
+  },
+  {
+    "name": "Cruzeiro",
+    "totalPoints": 0,
+    "totalGames": 1,
+    "totalVictories": 0,
+    "totalDraws": 0,
+    "totalLosses": 1,
+    "goalsFavor": 2,
+    "goalsOwn": 4,
+    "goalsBalance": -2,
+    "efficiency": 0,
+  },
+];
+
 export default {
-  matches,
+  matches1,
+  matches2,
   homeTeams,
+  awayTeams,
 };

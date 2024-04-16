@@ -21,7 +21,8 @@ const initialTeam: string[] = [];
 
 export type TeamType = 'homeTeam' | 'awayTeam';
 
-function getPoints(homeGoals: number, awayGoals: number): { gameStatus: string, points: number } {
+function getHomePoints(homeGoals: number, awayGoals: number): {
+  gameStatus: string, points: number } {
   let points = 0;
   let gameStatus = 'loss';
   if (homeGoals > awayGoals) {
@@ -35,9 +36,24 @@ function getPoints(homeGoals: number, awayGoals: number): { gameStatus: string, 
   return { gameStatus, points };
 }
 
-function getTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBoard {
+function getAwayPoints(homeGoals: number, awayGoals: number): {
+  gameStatus: string, points: number } {
+  let points = 0;
+  let gameStatus = 'loss';
+  if (homeGoals < awayGoals) {
+    points = 3;
+    gameStatus = 'victory';
+  }
+  if (homeGoals === awayGoals) {
+    points = 1;
+    gameStatus = 'draw';
+  }
+  return { gameStatus, points };
+}
+
+function getHomeTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBoard {
   const teamResult = currentTeamMatches.reduce((acc, match) => {
-    const { gameStatus, points } = getPoints(match.homeTeamGoals, match.awayTeamGoals);
+    const { gameStatus, points } = getHomePoints(match.homeTeamGoals, match.awayTeamGoals);
 
     const result = {
       ...acc,
@@ -49,6 +65,31 @@ function getTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBoard 
       totalLosses: gameStatus === 'loss' ? acc.totalLosses + 1 : acc.totalLosses,
       goalsFavor: acc.goalsFavor + match.homeTeamGoals,
       goalsOwn: acc.goalsOwn + match.awayTeamGoals,
+    };
+
+    result.goalsBalance = result.goalsFavor - result.goalsOwn;
+    result.efficiency = Number(((result.totalPoints / (result.totalGames * 3)) * 100).toFixed(2));
+
+    return result;
+  }, initialTeamResult);
+
+  return teamResult;
+}
+
+function getAwayTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBoard {
+  const teamResult = currentTeamMatches.reduce((acc, match) => {
+    const { gameStatus, points } = getAwayPoints(match.homeTeamGoals, match.awayTeamGoals);
+
+    const result = {
+      ...acc,
+      name: match.awayTeam.teamName,
+      totalPoints: acc.totalPoints + points,
+      totalGames: acc.totalGames + 1,
+      totalVictories: gameStatus === 'victory' ? acc.totalVictories + 1 : acc.totalVictories,
+      totalDraws: gameStatus === 'draw' ? acc.totalDraws + 1 : acc.totalDraws,
+      totalLosses: gameStatus === 'loss' ? acc.totalLosses + 1 : acc.totalLosses,
+      goalsFavor: acc.goalsFavor + match.awayTeamGoals,
+      goalsOwn: acc.goalsOwn + match.homeTeamGoals,
     };
 
     result.goalsBalance = result.goalsFavor - result.goalsOwn;
@@ -88,7 +129,9 @@ export default class LeaderBoardService {
       const currentTeamMatches = finishedMatches
         .filter((match) => (match[teamType] as { teamName: string }).teamName === team);
 
-      const teamResult = getTeamResult(currentTeamMatches);
+      let teamResult: ILeaderBoard = initialTeamResult;
+      if (teamType === 'homeTeam') teamResult = getHomeTeamResult(currentTeamMatches);
+      if (teamType === 'awayTeam') teamResult = getAwayTeamResult(currentTeamMatches);
 
       return teamResult;
     });
