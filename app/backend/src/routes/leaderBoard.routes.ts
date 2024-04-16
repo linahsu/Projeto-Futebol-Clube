@@ -5,6 +5,10 @@ const leaderBoardRouter = Router();
 const leaderBoardController = new LeaderBoardController();
 
 leaderBoardRouter.get(
+  '/',
+  (req: Request, res: Response) => leaderBoardController.getAllTeamsPerformance(req, res),
+);
+leaderBoardRouter.get(
   '/home',
   (req: Request, res: Response) => leaderBoardController.getHomeTeamsPerformance(req, res),
 );

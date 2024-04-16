@@ -1,7 +1,7 @@
 import LeaderBoardModel from '../models/LeaderBoardModel';
 import { IMatchWithTeamNames } from '../Interfaces/IMatch';
 import { IReadAllProgress } from '../Interfaces/IModel';
-import { ServiceResponse } from '../types/ServiceResponse';
+import { ServiceResponse, ServiceResponseSuccessful } from '../types/ServiceResponse';
 import ILeaderBoard from '../Interfaces/ILeaderBoard';
 
 const initialTeamResult = {
@@ -17,12 +17,11 @@ const initialTeamResult = {
   efficiency: 0,
 };
 
-const initialTeam: string[] = [];
-
-export type TeamType = 'homeTeam' | 'awayTeam';
+const initialTeamArray: string[] = [];
 
 function getHomePoints(homeGoals: number, awayGoals: number): {
-  gameStatus: string, points: number } {
+  gameStatus: string, points: number
+} {
   let points = 0;
   let gameStatus = 'loss';
   if (homeGoals > awayGoals) {
@@ -37,7 +36,8 @@ function getHomePoints(homeGoals: number, awayGoals: number): {
 }
 
 function getAwayPoints(homeGoals: number, awayGoals: number): {
-  gameStatus: string, points: number } {
+  gameStatus: string, points: number
+} {
   let points = 0;
   let gameStatus = 'loss';
   if (homeGoals < awayGoals) {
@@ -101,12 +101,46 @@ function getAwayTeamResult(currentTeamMatches: IMatchWithTeamNames[]): ILeaderBo
   return teamResult;
 }
 
+function getAllTeamsName(homeAndAwayTeams: ILeaderBoard[]): string[] {
+  const teams = homeAndAwayTeams.reduce((acc, team) => {
+    if (!initialTeamArray.includes(team.name)) {
+      return [...acc, team.name];
+    }
+    return acc;
+  }, initialTeamArray);
+
+  return teams;
+}
+
+function getTeamResult(currentTeamPerformances: ILeaderBoard[]): ILeaderBoard {
+  const teamFinalResult = currentTeamPerformances.reduce((acc, performance) => {
+    const result = {
+      ...acc,
+      name: performance.name,
+      totalPoints: acc.totalPoints + performance.totalPoints,
+      totalGames: acc.totalGames + performance.totalGames,
+      totalVictories: acc.totalVictories + performance.totalVictories,
+      totalDraws: acc.totalDraws + performance.totalDraws,
+      totalLosses: acc.totalLosses + performance.totalLosses,
+      goalsFavor: acc.goalsFavor + performance.goalsFavor,
+      goalsOwn: acc.goalsOwn + performance.goalsOwn,
+    };
+
+    result.goalsBalance = result.goalsFavor - result.goalsOwn;
+    result.efficiency = Number(((result.totalPoints / (result.totalGames * 3)) * 100).toFixed(2));
+
+    return result;
+  }, initialTeamResult);
+
+  return teamFinalResult;
+}
+
 export default class LeaderBoardService {
   constructor(
     private _leaderBoardModel: IReadAllProgress<IMatchWithTeamNames> = new LeaderBoardModel(),
   ) { }
 
-  async getTeamsByProgressAndType(progress: boolean, teamType: keyof IMatchWithTeamNames):
+  async getTeamsNameByProgressAndType(progress: boolean, teamType: keyof IMatchWithTeamNames):
   Promise<{ finishedMatches: IMatchWithTeamNames[], teams: string[] }> {
     const finishedMatches = await this._leaderBoardModel.getAllByProgress(progress);
 
@@ -115,15 +149,15 @@ export default class LeaderBoardService {
         return [...acc, (match[teamType] as { teamName: string }).teamName];
       }
       return acc;
-    }, initialTeam);
+    }, initialTeamArray);
 
     return { finishedMatches, teams };
   }
 
-  async getTeamsPerformance(
+  async getTeamsPerformanceByType(
     teamType: keyof IMatchWithTeamNames,
-  ): Promise<ServiceResponse<ILeaderBoard[]>> {
-    const { finishedMatches, teams } = await this.getTeamsByProgressAndType(false, teamType);
+  ): Promise<ServiceResponseSuccessful<ILeaderBoard[]>> {
+    const { finishedMatches, teams } = await this.getTeamsNameByProgressAndType(false, teamType);
 
     const getTeamsPerformance = teams.map((team) => {
       const currentTeamMatches = finishedMatches
@@ -143,5 +177,31 @@ export default class LeaderBoardService {
       .sort((a, b) => b.totalPoints - a.totalPoints);
 
     return { status: 'successful', data: getTeamsPerformance };
+  }
+
+  async getAllTeamsPerformance(): Promise<ServiceResponse<ILeaderBoard[]>> {
+    const homeTeams = (await this.getTeamsPerformanceByType('homeTeam')).data;
+    const awayTeams = (await this.getTeamsPerformanceByType('awayTeam')).data;
+    const homeAndAwayTeams = [...homeTeams, ...awayTeams];
+    console.log(homeAndAwayTeams);
+    const allTeamsName = getAllTeamsName(homeAndAwayTeams);
+    console.log(allTeamsName);
+
+    const getAllTeamsPerformance = allTeamsName.map((team) => {
+      const currentTeamPerformances = homeAndAwayTeams
+        .filter((teamPerformance) => teamPerformance.name === team);
+
+      const teamFinalResult: ILeaderBoard = getTeamResult(currentTeamPerformances);
+
+      return teamFinalResult;
+    });
+
+    getAllTeamsPerformance
+      .sort((a, b) => b.goalsFavor - a.goalsFavor)
+      .sort((a, b) => b.goalsBalance - a.goalsBalance)
+      .sort((a, b) => b.totalVictories - a.totalVictories)
+      .sort((a, b) => b.totalPoints - a.totalPoints);
+
+    return { status: 'successful', data: getAllTeamsPerformance };
   }
 }
