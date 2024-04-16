@@ -3,7 +3,7 @@ export interface IReadAll<T> {
 }
 
 export interface IReadAllProgress<T> {
-  getAll(progress: boolean): Promise<T[]>;
+  getAllByProgress(progress: boolean): Promise<T[]>;
 }
 
 export interface IReadById<T> {

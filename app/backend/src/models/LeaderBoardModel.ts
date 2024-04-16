@@ -6,7 +6,7 @@ import SequelizeTeamModel from '../database/models/SequelizeTeamModel';
 export default class LeaderBoardModel implements IReadAllProgress<IMatchWithTeamNames> {
   private _matchModel = SequelizeMatchModel;
 
-  async getAll(progress: boolean): Promise<IMatchWithTeamNames[]> {
+  async getAllByProgress(progress: boolean): Promise<IMatchWithTeamNames[]> {
     const finishedMatches = await this._matchModel.findAll({
       where: { inProgress: progress },
       include: [

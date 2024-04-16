@@ -17,7 +17,9 @@ const initialTeamResult = {
   efficiency: 0,
 };
 
-const initialHomeTeam: string[] = [];
+const initialTeam: string[] = [];
+
+export type TeamType = 'homeTeam' | 'awayTeam';
 
 function getPoints(homeGoals: number, awayGoals: number): { gameStatus: string, points: number } {
   let points = 0;
@@ -63,38 +65,40 @@ export default class LeaderBoardService {
     private _leaderBoardModel: IReadAllProgress<IMatchWithTeamNames> = new LeaderBoardModel(),
   ) { }
 
-  async getTeamsByProgress(progress: boolean):
-  Promise<{ finishedMatches: IMatchWithTeamNames[], homeTeams: string[] }> {
-    const finishedMatches = await this._leaderBoardModel.getAll(progress);
+  async getTeamsByProgressAndType(progress: boolean, teamType: keyof IMatchWithTeamNames):
+  Promise<{ finishedMatches: IMatchWithTeamNames[], teams: string[] }> {
+    const finishedMatches = await this._leaderBoardModel.getAllByProgress(progress);
 
-    const homeTeams = finishedMatches.reduce((acc, match) => {
-      if (!acc.includes(match.homeTeam.teamName)) {
-        return [...acc, match.homeTeam.teamName];
+    const teams = finishedMatches.reduce((acc, match) => {
+      if (!acc.includes((match[teamType] as { teamName: string }).teamName)) {
+        return [...acc, (match[teamType] as { teamName: string }).teamName];
       }
       return acc;
-    }, initialHomeTeam);
+    }, initialTeam);
 
-    return { finishedMatches, homeTeams };
+    return { finishedMatches, teams };
   }
 
-  async getHomeTeamsPerformance(): Promise<ServiceResponse<ILeaderBoard[]>> {
-    const { finishedMatches, homeTeams } = await this.getTeamsByProgress(false);
+  async getTeamsPerformance(
+    teamType: keyof IMatchWithTeamNames,
+  ): Promise<ServiceResponse<ILeaderBoard[]>> {
+    const { finishedMatches, teams } = await this.getTeamsByProgressAndType(false, teamType);
 
-    const getHomeTeamsPerformance = homeTeams.map((team) => {
+    const getTeamsPerformance = teams.map((team) => {
       const currentTeamMatches = finishedMatches
-        .filter((match) => match.homeTeam.teamName === team);
+        .filter((match) => (match[teamType] as { teamName: string }).teamName === team);
 
       const teamResult = getTeamResult(currentTeamMatches);
 
       return teamResult;
     });
 
-    getHomeTeamsPerformance
+    getTeamsPerformance
       .sort((a, b) => b.goalsFavor - a.goalsFavor)
       .sort((a, b) => b.goalsBalance - a.goalsBalance)
       .sort((a, b) => b.totalVictories - a.totalVictories)
       .sort((a, b) => b.totalPoints - a.totalPoints);
 
-    return { status: 'successful', data: getHomeTeamsPerformance };
+    return { status: 'successful', data: getTeamsPerformance };
   }
 }

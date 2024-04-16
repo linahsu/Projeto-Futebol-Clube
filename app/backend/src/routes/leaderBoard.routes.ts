@@ -8,5 +8,9 @@ leaderBoardRouter.get(
   '/home',
   (req: Request, res: Response) => leaderBoardController.getHomeTeamsPerformance(req, res),
 );
+leaderBoardRouter.get(
+  '/away',
+  (req: Request, res: Response) => leaderBoardController.getAwayTeamsPerformance(req, res),
+);
 
 export default leaderBoardRouter;
