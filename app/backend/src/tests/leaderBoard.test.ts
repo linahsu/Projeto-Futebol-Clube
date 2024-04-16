@@ -52,13 +52,17 @@ describe('INTEGRATION TESTS - LOGIN', () => {
     // Arrange
     sinon
       .stub(SequelizeMatchModel, 'findAll')
-      .resolves(leaderBoardMock.matches2 as unknown as Model<IMatch>[]);
+      .resolves(leaderBoardMock.matches3 as unknown as Model<IMatch>[]);
+    sinon.restore();
+    sinon
+      .stub(SequelizeMatchModel, 'findAll')
+      .resolves(leaderBoardMock.matches3 as unknown as Model<IMatch>[]);
 
     // Act
-    chaiHttpResponse = await chai.request(app).get('/leaderboard/away');
+    chaiHttpResponse = await chai.request(app).get('/leaderboard');
 
     // Assert
     expect(chaiHttpResponse.status).to.be.eq(200);
-    expect(chaiHttpResponse.body).to.deep.eq(leaderBoardMock.awayTeams);
+    expect(chaiHttpResponse.body).to.deep.eq(leaderBoardMock.allTeams);
   });
 });

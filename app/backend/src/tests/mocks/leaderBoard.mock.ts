@@ -293,114 +293,44 @@ const matches3 = [
       "teamName": "Grêmio"
     }
   },
-  {
-    "id": 31,
-    "homeTeamId": 8,
-    "homeTeamGoals": 2,
-    "awayTeamId": 10,
-    "awayTeamGoals": 0,
-    "inProgress": false,
-    "homeTeam": {
-      "teamName": "Grêmio"
-    },
-    "awayTeam": {
-      "teamName": "Minas Brasília"
-    }
-  },
-  {
-    "id": 18,
-    "homeTeamId": 12,
-    "homeTeamGoals": 4,
-    "awayTeamId": 5,
-    "awayTeamGoals": 2,
-    "inProgress": false,
-    "homeTeam": {
-      "teamName": "Palmeiras"
-    },
-    "awayTeam": {
-      "teamName": "Cruzeiro"
-    }
-  },
-  {
-    "id": 45,
-    "homeTeamId": 5,
-    "homeTeamGoals": 1,
-    "awayTeamId": 3,
-    "awayTeamGoals": 1,
-    "inProgress": true,
-    "homeTeam": {
-      "teamName": "Cruzeiro"
-    },
-    "awayTeam": {
-      "teamName": "Botafogo"
-    }
-  },
-  {
-    "id": 4,
-    "homeTeamId": 3,
-    "homeTeamGoals": 0,
-    "awayTeamId": 2,
-    "awayTeamGoals": 0,
-    "inProgress": false,
-    "homeTeam": {
-      "teamName": "Botafogo"
-    },
-    "awayTeam": {
-      "teamName": "Bahia"
-    }
-  },
-  {
-    "id": 22,
-    "homeTeamId": 4,
-    "homeTeamGoals": 3,
-    "awayTeamId": 3,
-    "awayTeamGoals": 1,
-    "inProgress": false,
-    "homeTeam": {
-      "teamName": "Corinthians"
-    },
-    "awayTeam": {
-      "teamName": "Botafogo"
-    }
-  },
 ];
 
 const allTeams = [
   {
     "name": "Grêmio",
-    "totalPoints": 7,
-    "totalGames": 3,
-    "totalVictories": 2,
+    "totalPoints": 4,
+    "totalGames": 2,
+    "totalVictories": 1,
     "totalDraws": 1,
     "totalLosses": 0,
-    "goalsFavor": 6,
+    "goalsFavor": 4,
     "goalsOwn": 3,
-    "goalsBalance": 3,
-    "efficiency": 77.78,
+    "goalsBalance": 1,
+    "efficiency": 66.67,
   },
   {
-    "name": "Botafogo",
-    "totalPoints": 2,
-    "totalGames": 3,
-    "totalVictories": 0,
-    "totalDraws": 2,
-    "totalLosses": 1,
-    "goalsFavor": 2,
-    "goalsOwn": 4,
-    "goalsBalance": -2,
-    "efficiency": 33.34,
-  },
-  {
-    "name": "Cruzeiro",
+    "name": "São Paulo",
     "totalPoints": 1,
-    "totalGames": 2,
+    "totalGames": 1,
     "totalVictories": 0,
     "totalDraws": 1,
+    "totalLosses": 0,
+    "goalsFavor": 1,
+    "goalsOwn": 1,
+    "goalsBalance": 0,
+    "efficiency": 33.33,
+  },
+  {
+    "name": "Avaí/Kindermann",
+    "totalPoints": 0,
+    "totalGames": 1,
+    "totalVictories": 0,
+    "totalDraws": 0,
     "totalLosses": 1,
-    "goalsFavor": 3,
-    "goalsOwn": 5,
-    "goalsBalance": -2,
-    "efficiency": 16.67,
+    "goalsFavor": 2,
+    "goalsOwn": 3,
+    "goalsBalance": -1,
+    "efficiency": 0,
   },
 ];
 
